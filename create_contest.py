@@ -172,7 +172,7 @@ def create_contest():
 	end_time = datetime.datetime.now() + datetime.timedelta(seconds = S.Timelimit_Find_problems)
 	for n in range(len(S.Problems)):
 		if datetime.datetime.now() > end_time:
-				exit('問題の制限が厳しすぎます')
+				sys.exit('問題の制限が厳しすぎます')
 		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[4]/div/div/input[1]').send_keys(back_space + str(S.Problems[n][0]))
 		time.sleep(0.5)
 		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[4]/div/div/input[2]').send_keys(back_space + str(S.Problems[n][1]))
@@ -203,9 +203,12 @@ def create_contest():
 		point.find_element(by = By.TAG_NAME, value = 'input').send_keys(Keys.ENTER)
 		time.sleep(0.5)
 	if not S.No_create_contest:
-		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[13]/div/button').click()
+		create_button = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[13]/div/button')
+		driver.execute_script("arguments[0].click();", create_button)
 	time.sleep(5)
 	global bot_msg
+	if driver.current_url == contest_url:
+		sys.exit('コンテストの作成に失敗しました')
 	bot_msg = S.Contest_Title + '開催!\n' + driver.current_url
 
 
