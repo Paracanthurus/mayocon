@@ -6,6 +6,9 @@
 username_github = ''
 password_github = ''
 
+Dir_path = ''
+# ディレクトリの絶対パス
+
 chromedriver_path = ''
 # chromedriverの絶対パス
 
@@ -45,7 +48,7 @@ Penalty = 300
 Start_Day = 0
 # n日後 (今日なら Start_Day = 0)
 Start_Time = '21:00'
-Duration = 100
+Duration = 0
 
 Expected_Participants = ''
 

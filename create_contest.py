@@ -64,18 +64,18 @@ class Time:
 
 def del_oldlog():
 	del_date = (datetime.datetime.now() - datetime.timedelta(days = S.Del_logfile_span)).date()
-	files = os.listdir('./log/')
+	files = os.listdir(S.Dir_path + '/log/')
 	for file in files:
 		if file < str(del_date) and file != '.gitignore':
-			os.remove('./log/' + file)
+			os.remove(S.Dir_path + '/log/' + file)
 
 
 def insert_set(st):
 	start_date = T.Start.date()
 	for n in range(S.Exclude_past_days + 1):
 		date = start_date - datetime.timedelta(days = n)
-		if os.path.exists('./log/' + str(date)):
-			logfile = open('./log/' + str(date), 'r')
+		if os.path.exists(S.Dir_path + '/log/' + str(date)):
+			logfile = open(S.Dir_path + '/log/' + str(date), 'r')
 			problem_list = logfile.readlines()
 			for problem in problem_list:
 				st.add(problem.strip(os.linesep))
@@ -168,7 +168,7 @@ def create_contest():
 	for i in range(5):
 		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[4]/div/button').click()
 		time.sleep(0.5)
-	logfile = open('./log/' + str(T.Start.date()), 'a')
+	logfile = open(S.Dir_path + '/log/' + str(T.Start.date()), 'a')
 	end_time = datetime.datetime.now() + datetime.timedelta(seconds = S.Timelimit_Find_problems)
 	for n in range(len(S.Problems)):
 		if datetime.datetime.now() > end_time:
@@ -205,15 +205,16 @@ def create_contest():
 	if not S.No_create_contest:
 		create_button = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[13]/div/button')
 		driver.execute_script("arguments[0].click();", create_button)
-	time.sleep(5)
+		time.sleep(5)
+		if driver.current_url == contest_url:
+			sys.exit('コンテストの作成に失敗しました')
 	global bot_msg
-	if driver.current_url == contest_url:
-		sys.exit('コンテストの作成に失敗しました')
 	bot_msg = S.Contest_Title + '開催!\n' + driver.current_url
 
 
 def main():
 	try:
+		print(os.getcwd())
 		del_oldlog()
 		global T, driver
 		chrome_service = service.Service(executable_path = S.chromedriver_path)
@@ -227,13 +228,13 @@ def main():
 			create_contest()
 
 	except SystemExit as e:
-		errlog = open('./err/' + str(datetime.datetime.now()), 'w')
+		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now()), 'w')
 		errlog.write(str(e))
 		errlog.close()
 		print(str(e))
 
 	except Exception:
-		errlog = open('./err/' + str(datetime.datetime.now()), 'w')
+		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now()), 'w')
 		msg = traceback.format_exc()
 		errlog.write(msg)
 		errlog.close()
@@ -241,7 +242,7 @@ def main():
 
 	else:
 		if S.discordbot and not S.bot_off:
-			subprocess.call('python discordbot.py "' + bot_msg + '"', shell = True)
+			subprocess.call('python3' + S.Dir_path + 'discordbot.py "' + bot_msg + '"', shell = True)
 
 	finally:
 		driver.quit()

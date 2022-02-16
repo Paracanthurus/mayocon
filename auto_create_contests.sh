@@ -1,3 +1,3 @@
 #!/bin/sh
 
-python create_contest.py
+python3 create_contest.py
