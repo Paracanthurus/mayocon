@@ -12,7 +12,7 @@ async def on_ready():
 		channel = client.get_channel(int(S.discordbot_channel_id))
 		await channel.send(sys.argv[1])
 	except Exception:
-		errlog = open('/Users/okubo/Documents/python/mayocon/err/' + str(datetime.datetime.now()), 'w')
+		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now()), 'w')
 		msg = traceback.format_exc()
 		errlog.write(msg)
 		errlog.close()
