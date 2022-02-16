@@ -242,7 +242,7 @@ def main():
 
 	else:
 		if S.discordbot and not S.bot_off:
-			subprocess.call('python3' + S.Dir_path + 'discordbot.py "' + bot_msg + '"', shell = True)
+			subprocess.call('python3 ' + S.Dir_path + 'discordbot.py "' + bot_msg + '"', shell = True)
 
 	finally:
 		driver.quit()
