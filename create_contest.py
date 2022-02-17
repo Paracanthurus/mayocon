@@ -1,17 +1,20 @@
+from time import sleep, time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.chrome import service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import setting as S
-import time
 import sys
 import datetime
 import re
 import os
 import traceback
 import subprocess
+import time
 
 
 login_url = 'https://github.com/login?client_id=162a5276634fc8b970f7&return_to=%2Flogin%2Foauth%2Fauthorize%3Fclient_id%3D162a5276634fc8b970f7%26redirect_uri%3Dhttps%253A%252F%252Fkenkoooo.com%252Fatcoder%252Finternal-api%252Fauthorize%253Fredirect_to%253D%25252F'
@@ -19,6 +22,14 @@ contest_url = 'https://kenkoooo.com/atcoder/#/contest/create'
 atcoder_url = 'https://atcoder.jp/contests/'
 
 bot_msg = ''
+
+chrome_service = service.Service(executable_path = S.chromedriver_path)
+chrome_options = Options()
+if not S.Display_Browser:
+	chrome_options.add_argument('--headless')
+driver = webdriver.Chrome(service = chrome_service, options = chrome_options)
+wait = WebDriverWait(driver = driver, timeout = 60)
+
 
 class Time:
 
@@ -86,7 +97,7 @@ def insert_set(st):
 
 def contest_exists():
 	driver.get(atcoder_url)
-	time.sleep(5)
+	wait.until(EC.presence_of_all_elements_located)
 	global bot_msg
 	w_list = ['月', '火', '水', '木', '金', '土', '日']
 	table =  driver.find_element(by = By.ID, value = 'contest-table-upcoming')
@@ -102,21 +113,25 @@ def contest_exists():
 			if S.No_contest_day_ARC and 'arc' in href:
 				bot_msg = ('%d月%d日(%s)はARC!'%(T.Start.month, T.Start.day, w_list[T.Start.weekday()]))
 				return 1
-		time.sleep(0.5)
 	return 0
 
 
 def login():
 	driver.get(login_url)
-	time.sleep(5)
+	wait.until(EC.presence_of_all_elements_located)
 	driver.find_element(by = By.ID, value = 'login_field').send_keys(S.username_github)
-	time.sleep(0.5)
 	driver.find_element(by = By.ID, value = 'password').send_keys(S.password_github)
-	time.sleep(0.5)
 	driver.find_element(by = By.ID, value = 'password').send_keys(Keys.RETURN)
-	time.sleep(5)
+	wait.until(EC.presence_of_all_elements_located)
+	time.sleep(3)
+	wait.until(EC.presence_of_all_elements_located)
 	if driver.current_url != 'https://kenkoooo.com/atcoder/#/table/':
-		sys.exit('ログインに失敗しました')
+		time.sleep(5)
+		authorize_button = driver.find_element(by = By.ID, value = 'js-oauth-authorize-btn')
+		driver.execute_script("arguments[0].click();", authorize_button)
+		wait.until(EC.presence_of_all_elements_located)
+		time.sleep(3)
+		wait.until(EC.presence_of_all_elements_located)
 
 
 def create_contest():
@@ -126,62 +141,45 @@ def create_contest():
 	for i in range(4):
 		back_space += Keys.BACK_SPACE
 	driver.get(contest_url)
-	time.sleep(5)
+	wait.until(EC.presence_of_all_elements_located)
 	if driver.current_url == 'https://kenkoooo.com/atcoder/#/table/':
 		sys.exit('ログインしていません')
+	time.sleep(3)
 	driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[2]/div/input').send_keys(S.Contest_Title)
-	time.sleep(0.5)
 	driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[3]/div/textarea').send_keys(S.Description)
-	time.sleep(0.5)
 	driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[4]/div/div/div/button').click()
-	time.sleep(0.5)
 	driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[4]/div/div/div/div/button[' + str(S.Public_State) + ']').click()
-	time.sleep(0.5)
 	driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[5]/div/div/div/button').click()
-	time.sleep(0.5)
 	driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[5]/div/div/div/div/button[' + str(S.Mode) + ']').click()
-	time.sleep(0.5)
 	driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[6]/div/input').send_keys(back_space + str(S.Penalty))
-	time.sleep(0.5)
 	driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[7]/div/div/input').send_keys(str(T.Start.year) + Keys.ARROW_RIGHT + str(T.Start.month) + Keys.ARROW_RIGHT + str(T.Start.day))
-	time.sleep(0.5)
 	Select(driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[7]/div/div/select[1]')).select_by_index(T.Start.hour)
-	time.sleep(0.5)
 	Select(driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[7]/div/div/select[2]')).select_by_index(int(T.Start.minute / 5))
-	time.sleep(0.5)
 	driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[8]/div/div/input').send_keys(str(T.End_time.year) + Keys.ARROW_RIGHT + str(T.End_time.month) + Keys.ARROW_RIGHT + str(T.End_time.day))
-	time.sleep(0.5)
 	Select(driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[8]/div/div/select[1]')).select_by_index(T.End_time.hour)
-	time.sleep(0.5)
 	Select(driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[8]/div/div/select[2]')).select_by_index(int(T.End_time.minute / 5))
-	time.sleep(0.5)
 	driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[9]/div/input').send_keys(S.Expected_Participants)
-	time.sleep(0.5)
 	checkbox = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[1]/div/div/div/span/input')
 	if S.Exclude_experimental_difficulty != checkbox.is_selected():
 		driver.execute_script("arguments[0].click();", checkbox)
-	time.sleep(0.5)
+		wait.until(EC.presence_of_all_elements_located)
 	driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[2]/div/div/div/button').click()
-	time.sleep(0.5)
 	driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[2]/div/div/div/div/button[' + str(S.Exclude_probrems) + ']').click()
-	time.sleep(0.5)
 	for i in range(5):
 		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[4]/div/button').click()
-		time.sleep(0.5)
+		wait.until(EC.presence_of_all_elements_located)
 	logfile = open(S.Dir_path + '/log/' + str(T.Start.date()), 'a')
 	end_time = datetime.datetime.now() + datetime.timedelta(seconds = S.Timelimit_Find_problems)
 	for n in range(len(S.Problems)):
 		if datetime.datetime.now() > end_time:
 				sys.exit('問題の制限が厳しすぎます')
 		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[4]/div/div/input[1]').send_keys(back_space + str(S.Problems[n][0]))
-		time.sleep(0.5)
 		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[4]/div/div/input[2]').send_keys(back_space + str(S.Problems[n][1]))
-		time.sleep(0.5)
 		while True:
 			driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[6]/div[1]/button').click()
 			time.sleep(0.5)
+			wait.until(EC.presence_of_all_elements_located)
 			problem_id = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[10]/div/div/div/table/tbody/tr[' + str(n + 1) + ']').get_attribute('data-rbd-draggable-id')
-			time.sleep(0.5)
 			if 'abc' in problem_id or not S.ABC_Only:
 				if not problem_id in recently_set:
 					logfile.write(problem_id + os.linesep)
@@ -189,23 +187,24 @@ def create_contest():
 			del_button = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[10]/div/div/div/table/tbody/tr[' + str(n + 1) + ']/td[5]/button')
 			driver.execute_script("arguments[0].click();", del_button)
 			time.sleep(0.5)
+			wait.until(EC.presence_of_all_elements_located)
 	logfile.close()
 	if S.Sort_Difficulty:
 		diff_sort = driver.find_element(by = By.CSS_SELECTOR, value = '#root > div > div.my-5.container > div:nth-child(12) > div > div > div > table > thead > tr > th:nth-child(3)')
 		driver.execute_script("arguments[0].click();", diff_sort)
-		time.sleep(0.5)
+		wait.until(EC.presence_of_all_elements_located)
 	for n in range(len(S.Problems)):
 		point = driver.find_element(by = By.CSS_SELECTOR, value = '#root > div > div.my-5.container > div:nth-child(12) > div > div > div > table > tbody > tr:nth-child(' + str(n + 1) + ') > td:nth-child(4)')
 		driver.execute_script("arguments[0].click();", point)
-		time.sleep(0.5)
 		if n < len(S.Points):
 			point.find_element(by = By.TAG_NAME, value = 'input').send_keys(str(S.Points[n]))
 		point.find_element(by = By.TAG_NAME, value = 'input').send_keys(Keys.ENTER)
-		time.sleep(0.5)
 	if not S.No_create_contest:
 		create_button = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[13]/div/button')
 		driver.execute_script("arguments[0].click();", create_button)
-		time.sleep(5)
+		wait.until(EC.presence_of_all_elements_located)
+		time.sleep(3)
+		wait.until(EC.presence_of_all_elements_located)
 		if driver.current_url == contest_url:
 			sys.exit('コンテストの作成に失敗しました')
 	global bot_msg
@@ -214,15 +213,9 @@ def create_contest():
 
 def main():
 	try:
-		print(os.getcwd())
-		del_oldlog()
-		global T, driver
-		chrome_service = service.Service(executable_path = S.chromedriver_path)
-		chrome_options = Options()
-		if not S.Display_Browser:
-			chrome_options.add_argument('--headless')
-		driver = webdriver.Chrome(service = chrome_service, options = chrome_options)
+		global T
 		T = Time()
+		del_oldlog()
 		if not contest_exists():
 			login()
 			create_contest()
