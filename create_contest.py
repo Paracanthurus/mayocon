@@ -108,10 +108,10 @@ def contest_exists():
 		if str(T.Start.date()) in tds[0].text:
 			href = tds[1].find_element(by = By.TAG_NAME, value = 'a').get_attribute('href')
 			if S.No_contest_day_ABC and 'abc' in href:
-				bot_msg = '%d月%d日(%s)はABC!'%(T.Start.month, T.Start.day, w_list[T.Start.weekday()])
+				bot_msg = '%d月%d日(%s)はABC!\n'%(T.Start.month, T.Start.day, w_list[T.Start.weekday()]) + href
 				return 1
 			if S.No_contest_day_ARC and 'arc' in href:
-				bot_msg = ('%d月%d日(%s)はARC!'%(T.Start.month, T.Start.day, w_list[T.Start.weekday()]))
+				bot_msg = ('%d月%d日(%s)はARC!\n'%(T.Start.month, T.Start.day, w_list[T.Start.weekday()])) + href
 				return 1
 	return 0
 
