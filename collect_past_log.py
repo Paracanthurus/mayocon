@@ -42,13 +42,13 @@ def collect_contests_url():
 	trs = table.find_elements(by = By.TAG_NAME, value = 'tr')
 	for tr in trs:
 		tds = tr.find_elements(by = By.TAG_NAME, value = 'td')
+		date = tds[3].find_element(by = By.TAG_NAME, value = 'div').get_attribute("textContent")
+		date = date.split(' ')[0]
+		print(date)
 		title = tds[0].find_element(by = By.TAG_NAME, value = 'a').get_attribute("textContent")
 		href = tds[0].find_element(by = By.TAG_NAME, value = 'a').get_attribute("href")
 		title = title[7:]
 		print(title)
-		date = tds[3].find_element(by = By.TAG_NAME, value = 'div').get_attribute("textContent")
-		date = date.split(' ')[0]
-		print(date)
 		if title == contest_title:
 			url_list.append((href, date))
 	return url_list
@@ -57,7 +57,7 @@ def collect_past_log(url, date):
 	driver.get(url)
 	wait.until(EC.presence_of_all_elements_located)
 	time.sleep(1)
-	file = open(S.Dir_path + '/past_log/' + date, 'w')
+	file = open(S.Dir_path + '/log/' + date, 'w')
 	table_2 = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[6]/div[2]/div/table/tbody')
 	tr_2 = table_2.find_elements(by = By.TAG_NAME, value = 'tr')
 	for problem in tr_2:
@@ -70,8 +70,9 @@ def collect_past_log(url, date):
 def main():
 	try:
 		url_list = collect_contests_url()
+		print("")
 		for (url, date) in url_list:
-			print("past_logに追加中（" + date + "）")
+			print("past_logに追加中 (" + date + ")")
 			collect_past_log(url, date)
 	except Exception:
 		print(traceback.format_exc())
