@@ -176,7 +176,7 @@ def create_contest():
 		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[4]/div/div/input[2]').send_keys(back_space + str(S.Problems[n][1]))
 		while True:
 			driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[6]/div[1]/button').click()
-			time.sleep(1)
+			time.sleep(0.5)
 			wait.until(EC.presence_of_all_elements_located)
 			problem_id = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[10]/div/div/div/table/tbody/tr[' + str(n + 1) + ']').get_attribute('data-rbd-draggable-id')
 			if 'abc' in problem_id or not S.ABC_Only:
@@ -185,7 +185,7 @@ def create_contest():
 					break
 			del_button = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[10]/div/div/div/table/tbody/tr[' + str(n + 1) + ']/td[5]/button')
 			driver.execute_script("arguments[0].click();", del_button)
-			time.sleep(1)
+			time.sleep(0.5)
 			wait.until(EC.presence_of_all_elements_located)
 	logfile.close()
 	if S.Sort_Difficulty:
