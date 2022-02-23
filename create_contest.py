@@ -176,7 +176,7 @@ def create_contest():
 		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[4]/div/div/input[2]').send_keys(back_space + str(S.Problems[n][1]))
 		while True:
 			driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[6]/div[1]/button').click()
-			time.sleep(0.5)
+			time.sleep(1)
 			wait.until(EC.presence_of_all_elements_located)
 			problem_id = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[10]/div/div/div/table/tbody/tr[' + str(n + 1) + ']').get_attribute('data-rbd-draggable-id')
 			if 'abc' in problem_id or not S.ABC_Only:
@@ -185,12 +185,13 @@ def create_contest():
 					break
 			del_button = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[10]/div/div/div/table/tbody/tr[' + str(n + 1) + ']/td[5]/button')
 			driver.execute_script("arguments[0].click();", del_button)
-			time.sleep(0.5)
+			time.sleep(1)
 			wait.until(EC.presence_of_all_elements_located)
 	logfile.close()
 	if S.Sort_Difficulty:
 		diff_sort = driver.find_element(by = By.CSS_SELECTOR, value = '#root > div > div.my-5.container > div:nth-child(12) > div > div > div > table > thead > tr > th:nth-child(3)')
 		driver.execute_script("arguments[0].click();", diff_sort)
+		time.sleep(1)
 		wait.until(EC.presence_of_all_elements_located)
 	for n in range(len(S.Problems)):
 		point = driver.find_element(by = By.CSS_SELECTOR, value = '#root > div > div.my-5.container > div:nth-child(12) > div > div > div > table > tbody > tr:nth-child(' + str(n + 1) + ') > td:nth-child(4)')
@@ -198,6 +199,7 @@ def create_contest():
 		if n < len(S.Points):
 			point.find_element(by = By.TAG_NAME, value = 'input').send_keys(str(S.Points[n]))
 		point.find_element(by = By.TAG_NAME, value = 'input').send_keys(Keys.ENTER)
+		time.sleep(0.5)
 	if not S.No_create_contest:
 		create_button = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[13]/div/button')
 		driver.execute_script("arguments[0].click();", create_button)
