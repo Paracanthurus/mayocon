@@ -1,4 +1,5 @@
 __pycache__/
 err/2*
 log/2*
+past_log/2*
 .DS_Store
