@@ -72,7 +72,7 @@ def main():
 		url_list = collect_contests_url()
 		print("")
 		for (url, date) in url_list:
-			print("past_logに追加中 (" + date + ")")
+			print("logに追加中 (" + date + ")")
 			collect_past_log(url, date)
 	except Exception:
 		print(traceback.format_exc())
