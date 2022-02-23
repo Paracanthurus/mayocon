@@ -22,13 +22,6 @@ atcoder_url = 'https://atcoder.jp/contests/'
 
 bot_msg = ''
 
-chrome_service = service.Service(executable_path = S.chromedriver_path)
-chrome_options = Options()
-if not S.Display_Browser:
-	chrome_options.add_argument('--headless')
-driver = webdriver.Chrome(service = chrome_service, options = chrome_options)
-wait = WebDriverWait(driver = driver, timeout = 60)
-
 
 class Time:
 
@@ -243,4 +236,10 @@ def main():
 
 
 if __name__ == '__main__':
+	chrome_service = service.Service(executable_path = S.chromedriver_path)
+	chrome_options = Options()
+	if not S.Display_Browser:
+		chrome_options.add_argument('--headless')
+	driver = webdriver.Chrome(service = chrome_service, options = chrome_options)
+	wait = WebDriverWait(driver = driver, timeout = 60)
 	main()

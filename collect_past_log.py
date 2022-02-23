@@ -14,13 +14,6 @@ contest_title = S.Contest_Title
 display_browser = False
 
 
-chrome_service = service.Service(executable_path = S.chromedriver_path)
-chrome_options = Options()
-if not display_browser:
-	chrome_options.add_argument('--headless')
-driver = webdriver.Chrome(service = chrome_service, options = chrome_options)
-wait = WebDriverWait(driver = driver, timeout = 60)
-
 def display_All():
 	dropdown = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[6]/div/div/div[1]/div/div[1]/span')
 	bottun = dropdown.find_element(by = By.TAG_NAME, value = 'button')
@@ -81,4 +74,10 @@ def main():
 
 
 if __name__ == '__main__':
+	chrome_service = service.Service(executable_path = S.chromedriver_path)
+	chrome_options = Options()
+	if not display_browser:
+		chrome_options.add_argument('--headless')
+	driver = webdriver.Chrome(service = chrome_service, options = chrome_options)
+	wait = WebDriverWait(driver = driver, timeout = 60)
 	main()
