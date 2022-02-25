@@ -81,7 +81,7 @@ def insert_set(st):
 			logfile = open(S.Dir_path + '/log/' + str(date), 'r')
 			problem_list = logfile.readlines()
 			for problem in problem_list:
-				st.add(problem.strip(os.linesep))
+				st.add(problem.strip('\n'))
 			logfile.close()
 		else:
 			continue
@@ -174,7 +174,7 @@ def create_contest():
 			problem_id = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[10]/div/div/div/table/tbody/tr[' + str(n + 1) + ']').get_attribute('data-rbd-draggable-id')
 			if 'abc' in problem_id or not S.ABC_Only:
 				if not problem_id in recently_set:
-					logfile.write(problem_id + os.linesep)
+					logfile.write(problem_id + '\n')
 					break
 			del_button = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[10]/div/div/div/table/tbody/tr[' + str(n + 1) + ']/td[5]/button')
 			driver.execute_script("arguments[0].click();", del_button)
