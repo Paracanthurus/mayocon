@@ -215,14 +215,16 @@ def main():
 			create_contest()
 
 	except SystemExit as e:
-		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now()), 'w')
+		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now().date()), 'a')
+		errlog.write('\n\n' + str(datetime.datetime.now()) + '\n')
 		errlog.write(str(e))
 		errlog.close()
 		print(str(e))
 
 	except Exception:
-		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now()), 'w')
+		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now().date()), 'a')
 		msg = traceback.format_exc()
+		errlog.write('\n\n' + str(datetime.datetime.now()) + '\n')
 		errlog.write(msg)
 		errlog.close()
 		print(msg + '\nエラーが発生しました\n')
