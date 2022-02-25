@@ -217,16 +217,16 @@ def main():
 
 	except SystemExit as e:
 		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now().date()), 'a')
-		errlog.write('\n\n' + str(datetime.datetime.now()) + '\n')
-		errlog.write(str(e))
+		errlog.write('\n' + str(datetime.datetime.now()) + '\n')
+		errlog.write(str(e) + '\n')
 		errlog.close()
 		print(str(e))
 
 	except Exception:
 		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now().date()), 'a')
 		msg = traceback.format_exc()
-		errlog.write('\n\n' + str(datetime.datetime.now()) + '\n')
-		errlog.write(msg)
+		errlog.write('\n' + str(datetime.datetime.now()) + '\n')
+		errlog.write(msg + '\n')
 		errlog.close()
 		print(msg + '\nエラーが発生しました\n')
 
