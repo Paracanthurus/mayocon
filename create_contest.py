@@ -164,7 +164,8 @@ def create_contest():
 	end_time = datetime.datetime.now() + datetime.timedelta(seconds = S.Timelimit_Find_problems)
 	for n in range(len(S.Problems)):
 		if datetime.datetime.now() > end_time:
-				sys.exit('問題の制限が厳しすぎます')
+			logfile.close()
+			sys.exit('問題の制限が厳しすぎます')
 		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[4]/div/div/input[1]').send_keys(back_space + str(S.Problems[n][0]))
 		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[4]/div/div/input[2]').send_keys(back_space + str(S.Problems[n][1]))
 		while True:
