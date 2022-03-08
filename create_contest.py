@@ -117,6 +117,11 @@ def login():
 	wait.until(EC.presence_of_all_elements_located)
 	time.sleep(3)
 	wait.until(EC.presence_of_all_elements_located)
+	if driver.current_url == 'https://github.com/sessions/verified-device':
+		print('2段階認証が必要です')
+		time.sleep(300)
+		if driver.current_url != 'https://kenkoooo.com/atcoder/#/table/':
+			sys.exit('2段階認証が必要です')
 	if driver.current_url != 'https://kenkoooo.com/atcoder/#/table/':
 		time.sleep(5)
 		authorize_button = driver.find_element(by = By.ID, value = 'js-oauth-authorize-btn')
