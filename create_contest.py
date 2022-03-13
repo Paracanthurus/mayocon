@@ -118,11 +118,15 @@ def login():
 	time.sleep(3)
 	wait.until(EC.presence_of_all_elements_located)
 	if driver.current_url == 'https://github.com/sessions/verified-device':
-		print('2段階認証が必要です')
-		time.sleep(300)
+		if not chrome_options.headless:
+			print('2段階認証が必要です')
+			for t in range(300):
+				time.sleep(1)
+				if driver.current_url == 'https://kenkoooo.com/atcoder/#/table/':
+					break
 		if driver.current_url != 'https://kenkoooo.com/atcoder/#/table/':
 			sys.exit('2段階認証が必要です')
-	if driver.current_url != 'https://kenkoooo.com/atcoder/#/table/':
+	elif driver.current_url != 'https://kenkoooo.com/atcoder/#/table/':
 		time.sleep(5)
 		authorize_button = driver.find_element(by = By.ID, value = 'js-oauth-authorize-btn')
 		driver.execute_script("arguments[0].click();", authorize_button)
@@ -246,8 +250,7 @@ def main():
 if __name__ == '__main__':
 	chrome_service = service.Service(executable_path = S.chromedriver_path)
 	chrome_options = Options()
-	if not S.Display_Browser:
-		chrome_options.add_argument('-headless')
+	chrome_options.headless = not S.Display_Browser
 	driver = webdriver.Chrome(service = chrome_service, options = chrome_options)
 	wait = WebDriverWait(driver = driver, timeout = 60)
 	main()
