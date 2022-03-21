@@ -216,13 +216,22 @@ def create_contest():
 
 
 def main():
+	global T
+	T = Time()
+	del_oldlog()
+	if not contest_exists():
+		login()
+		create_contest()
+
+
+if __name__ == '__main__':
 	try:
-		global T
-		T = Time()
-		del_oldlog()
-		if not contest_exists():
-			login()
-			create_contest()
+		chrome_service = service.Service(executable_path = S.chromedriver_path)
+		chrome_options = Options()
+		chrome_options.headless = not S.Display_Browser
+		driver = webdriver.Chrome(service = chrome_service, options = chrome_options)
+		wait = WebDriverWait(driver = driver, timeout = 60)
+		main()
 
 	except SystemExit as e:
 		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now().date()), 'a')
@@ -245,12 +254,3 @@ def main():
 
 	finally:
 		driver.quit()
-
-
-if __name__ == '__main__':
-	chrome_service = service.Service(executable_path = S.chromedriver_path)
-	chrome_options = Options()
-	chrome_options.headless = not S.Display_Browser
-	driver = webdriver.Chrome(service = chrome_service, options = chrome_options)
-	wait = WebDriverWait(driver = driver, timeout = 60)
-	main()
