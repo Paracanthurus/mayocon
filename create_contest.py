@@ -69,7 +69,7 @@ def del_oldlog():
 	del_date = (datetime.datetime.now() - datetime.timedelta(days = S.Del_logfile_span)).date()
 	files = os.listdir(S.Dir_path + '/log/')
 	for file in files:
-		if file < str(del_date) and file != '.gitignore':
+		if file < str(del_date) + '.log' and file != '.gitkeep':
 			os.remove(S.Dir_path + '/log/' + file)
 
 
@@ -77,8 +77,8 @@ def insert_set(st):
 	start_date = T.Start.date()
 	for n in range(S.Exclude_past_days + 1):
 		date = start_date - datetime.timedelta(days = n)
-		if os.path.exists(S.Dir_path + '/log/' + str(date)):
-			logfile = open(S.Dir_path + '/log/' + str(date), 'r')
+		if os.path.exists(S.Dir_path + '/log/' + str(date) + '.log'):
+			logfile = open(S.Dir_path + '/log/' + str(date) + '.log', 'r')
 			problem_list = logfile.readlines()
 			for problem in problem_list:
 				st.add(problem.strip('\n'))
@@ -169,7 +169,7 @@ def create_contest():
 	for i in range(5):
 		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[4]/div/button').click()
 		wait.until(EC.presence_of_all_elements_located)
-	logfile = open(S.Dir_path + '/log/' + str(T.Start.date()), 'a')
+	logfile = open(S.Dir_path + '/log/' + str(T.Start.date()) + '.log', 'a')
 	end_time = datetime.datetime.now() + datetime.timedelta(seconds = S.Timelimit_Find_problems)
 	for n in range(len(S.Problems)):
 		if datetime.datetime.now() > end_time:
@@ -236,14 +236,14 @@ if __name__ == '__main__':
 		main()
 
 	except SystemExit as e:
-		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now().date()), 'a')
+		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now().date()) + '.log', 'a')
 		errlog.write('\n' + str(datetime.datetime.now()) + '\n')
 		errlog.write(str(e) + '\n')
 		errlog.close()
 		print(str(e))
 
 	except Exception:
-		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now().date()), 'a')
+		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now().date()) + '.log', 'a')
 		msg = traceback.format_exc()
 		errlog.write('\n' + str(datetime.datetime.now()) + '\n')
 		errlog.write(msg + '\n')
