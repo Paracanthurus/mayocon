@@ -118,7 +118,7 @@ def login():
 	time.sleep(3)
 	wait.until(EC.presence_of_all_elements_located)
 	if driver.current_url == 'https://github.com/sessions/verified-device':
-		if not chrome_options.headless:
+		if S.Display_Browser:
 			print('2段階認証が必要です')
 			for t in range(300):
 				time.sleep(1)
@@ -228,7 +228,9 @@ if __name__ == '__main__':
 	try:
 		chrome_service = service.Service(executable_path = S.chromedriver_path)
 		chrome_options = Options()
-		chrome_options.headless = not S.Display_Browser
+		chrome_options.add_argument('--no-sandbox')
+		if not S.Display_Browser:
+			chrome_options.add_argument('--headless')
 		driver = webdriver.Chrome(service = chrome_service, options = chrome_options)
 		wait = WebDriverWait(driver = driver, timeout = 60)
 		main()
