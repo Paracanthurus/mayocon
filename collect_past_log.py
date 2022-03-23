@@ -76,8 +76,9 @@ def main():
 if __name__ == '__main__':
 	chrome_service = service.Service(executable_path = S.chromedriver_path)
 	chrome_options = Options()
-	if not display_browser:
-		chrome_options.add_argument('-headless')
+	chrome_options.add_argument('--no-sandbox')
+	if not S.Display_Browser:
+		chrome_options.add_argument('--headless')
 	driver = webdriver.Chrome(service = chrome_service, options = chrome_options)
 	wait = WebDriverWait(driver = driver, timeout = 60)
 	main()
