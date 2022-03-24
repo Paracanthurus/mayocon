@@ -169,11 +169,13 @@ def create_contest():
 	for i in range(5):
 		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[4]/div/button').click()
 		wait.until(EC.presence_of_all_elements_located)
-	logfile = open(S.Dir_path + '/log/' + str(T.Start.date()) + '.log', 'a')
+	if not S.No_log:
+		logfile = open(S.Dir_path + '/log/' + str(T.Start.date()) + '.log', 'a')
 	end_time = datetime.datetime.now() + datetime.timedelta(seconds = S.Timelimit_Find_problems)
 	for n in range(len(S.Problems)):
 		if datetime.datetime.now() > end_time:
-			logfile.close()
+			if not S.No_log:
+				logfile.close()
 			sys.exit('問題の制限が厳しすぎます')
 		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[4]/div/div/input[1]').send_keys(back_space + str(S.Problems[n][0]))
 		driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[12]/div/div/div/div/form/div[4]/div/div/input[2]').send_keys(back_space + str(S.Problems[n][1]))
@@ -184,13 +186,15 @@ def create_contest():
 			problem_id = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[10]/div/div/div/table/tbody/tr[' + str(n + 1) + ']').get_attribute('data-rbd-draggable-id')
 			if 'abc' in problem_id or not S.ABC_Only:
 				if not problem_id in recently_set:
-					logfile.write(problem_id + '\n')
+					if not S.No_log:
+						logfile.write(problem_id + '\n')
 					break
 			del_button = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[10]/div/div/div/table/tbody/tr[' + str(n + 1) + ']/td[5]/button')
 			driver.execute_script("arguments[0].click();", del_button)
 			time.sleep(0.5)
 			wait.until(EC.presence_of_all_elements_located)
-	logfile.close()
+	if not S.No_log:
+		logfile.close()
 	if S.Sort_Difficulty:
 		diff_sort = driver.find_element(by = By.CSS_SELECTOR, value = '#root > div > div.my-5.container > div:nth-child(12) > div > div > div > table > thead > tr > th:nth-child(3)')
 		driver.execute_script("arguments[0].click();", diff_sort)
@@ -241,6 +245,7 @@ if __name__ == '__main__':
 		errlog.write(str(e) + '\n')
 		errlog.close()
 		print(str(e))
+		bot_msg = 'err'
 
 	except Exception:
 		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now().date()) + '.log', 'a')
@@ -249,10 +254,9 @@ if __name__ == '__main__':
 		errlog.write(msg + '\n')
 		errlog.close()
 		print(msg + '\nエラーが発生しました\n')
-
-	else:
-		if S.discordbot and not S.bot_off:
-			subprocess.call('python3 ' + S.Dir_path + '/discordbot.py "' + bot_msg + '"', shell = True)
+		bot_msg = 'err'
 
 	finally:
+		if S.discordbot and not S.bot_off:
+			subprocess.call('python3 ' + S.Dir_path + '/discordbot.py "' + bot_msg + '"', shell = True)
 		driver.quit()

@@ -12,10 +12,12 @@ Dir_path = ''
 chromedriver_path = ''
 # chromedriverの絶対パス
 
-discordbot = True
+discordbot = False
 # botを使用する
 discordbot_token = ''
 discordbot_channel_id = 1234567890
+user_id = 1234567890
+# エラー通知DM先のユーザーID
 
 Timelimit_Find_problems = 300
 # 問題の決定に n秒以上かかった場合プログラムを停止
@@ -32,6 +34,8 @@ bot_off = True
 # botを起動せずに終了
 Display_Browser = True
 # 実行時にブラウザを表示する
+No_log = True
+# 出題ログを保存しない
 
 
 
