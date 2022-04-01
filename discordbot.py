@@ -16,9 +16,10 @@ async def on_ready():
 			channel = client.get_channel(int(S.discordbot_channel_id))
 			await channel.send(sys.argv[1])
 	except Exception as e:
-		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now().date()) + '.log', 'w')
+		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now().date()) + '.log', 'a')
 		msg = traceback.format_exc() + '\n' + str(e)
-		errlog.write(msg)
+		errlog.write('\n' + str(datetime.datetime.now()) + '\n')
+		errlog.write(msg + '\n')
 		errlog.close()
 		print(msg + '\nエラーが発生しました\n')
 	finally:
