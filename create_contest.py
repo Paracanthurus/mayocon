@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import setting as S
+import resultbot
 import sys
 import datetime
 import re
@@ -237,6 +238,7 @@ if __name__ == '__main__':
 			chrome_options.add_argument('--headless')
 		driver = webdriver.Chrome(service = chrome_service, options = chrome_options)
 		wait = WebDriverWait(driver = driver, timeout = 60)
+		resultbot.main(driver, wait)
 		main()
 
 	except SystemExit as e:
@@ -258,5 +260,5 @@ if __name__ == '__main__':
 
 	finally:
 		if S.discordbot and not S.bot_off:
-			subprocess.call('python3 ' + S.Dir_path + '/discordbot.py "' + bot_msg + '"', shell = True)
+			subprocess.call('python3 ' + S.Dir_path + '/discordbot.py "' + bot_msg + '" "' + str(S.discordbot_channel_id) + '"', shell = True)
 		driver.quit()

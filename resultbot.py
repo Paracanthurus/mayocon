@@ -7,12 +7,13 @@ from selenium.webdriver.support import expected_conditions as EC
 import setting as S
 import traceback
 import time
+import datetime
+import subprocess
 
 
 contest_title = S.Contest_Title
 
 display_browser = False
-
 
 def display_All():
 	dropdown = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[6]/div/div/div[1]/div/div[1]/span')
@@ -26,7 +27,6 @@ def display_All():
 	time.sleep(1)
 
 def collect_contests_url():
-	url_list = []
 	driver.get('https://kenkoooo.com/atcoder/#/contest/recent')
 	wait.until(EC.presence_of_all_elements_located)
 	time.sleep(1)
@@ -35,42 +35,53 @@ def collect_contests_url():
 	trs = table.find_elements(by = By.TAG_NAME, value = 'tr')
 	for tr in trs:
 		tds = tr.find_elements(by = By.TAG_NAME, value = 'td')
-		date = tds[3].find_element(by = By.TAG_NAME, value = 'div').get_attribute("textContent")
+		date = tds[4].find_element(by = By.TAG_NAME, value = 'div').get_attribute("textContent")
 		date = date.split(' ')[0]
-		print(date)
 		title = tds[0].find_element(by = By.TAG_NAME, value = 'a').get_attribute("textContent")
 		href = tds[0].find_element(by = By.TAG_NAME, value = 'a').get_attribute("href")
 		title = title[7:]
-		print(title)
-		if title == contest_title:
-			url_list.append((href, date))
-	return url_list
+		if date < str((datetime.datetime.today() - datetime.timedelta(days=2)).date()):
+			return 'no_contest'
+		if title == S.Contest_Title:
+			return href
 
-def collect_past_log(url, date):
+def collect_ranking(url):
 	driver.get(url)
 	wait.until(EC.presence_of_all_elements_located)
 	time.sleep(1)
-	file = open(S.Dir_path + '/log/' + date + '.log', 'w')
-	table_2 = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[6]/div[2]/div/table/tbody')
-	tr_2 = table_2.find_elements(by = By.TAG_NAME, value = 'tr')
-	for problem in tr_2:
-		tds_2 = problem.find_elements(by = By.TAG_NAME, value = 'td')
-		problem_url = tds_2[0].find_element(by = By.TAG_NAME, value = 'a').get_attribute('href')
-		problem_name = problem_url.split('/')[-1]
-		file.write(problem_name + '\n')
-	file.close()
+	table = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[6]/div[2]/div/table')
+	tbody = table.find_element(by = By.TAG_NAME, value = 'tbody')
+	users = tbody.find_elements(by = By.TAG_NAME, value = 'tr')
+	users.pop(-1)
+	names = '\`\`\`'
+	c = 1
+	for user in users:
+		name = user.find_element(by = By.TAG_NAME, value = 'a').text
+		names += '{:>2d}: {}'.format(c, name) + '\n'
+		c += 1
+	names += '\`\`\`'
+	return names
 
-def main():
+def main(Driver, Wait):
 	try:
-		url_list = collect_contests_url()
-		print("")
-		for (url, date) in url_list:
-			print("logに追加中 (" + date + ")")
-			collect_past_log(url, date)
+		global driver
+		global wait
+		driver = Driver
+		wait = Wait
+		url = collect_contests_url()
+		if url == 'no_contest':
+			return
+		url += '?activeTab=Standings'
+		w_list = ['月', '火', '水', '木', '金', '土', '日']
+		Today = datetime.datetime.today().date()
+		bot_msg = '%d月%d日(%s)の結果発表!\n'%(Today.month, Today.day, w_list[Today.weekday()])
+		bot_msg += collect_ranking(url)
 	except Exception:
 		print(traceback.format_exc())
+		bot_msg = 'err'
 	finally:
-		driver.quit()
+		if S.discordbot and not S.bot_off:
+			subprocess.call('python3 ' + S.Dir_path + '/discordbot.py "' + bot_msg + '" "' + str(S.result_channel_id) + '"', shell = True)
 
 
 if __name__ == '__main__':
@@ -82,3 +93,4 @@ if __name__ == '__main__':
 	driver = webdriver.Chrome(service = chrome_service, options = chrome_options)
 	wait = WebDriverWait(driver = driver, timeout = 60)
 	main()
+	driver.quit()

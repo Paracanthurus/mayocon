@@ -13,7 +13,7 @@ async def on_ready():
 			user = await client.fetch_user(int(S.user_id))
 			await user.send(str(datetime.datetime.now()) + '\nエラーが発生しました')
 		else:
-			channel = client.get_channel(int(S.discordbot_channel_id))
+			channel = client.get_channel(int(sys.argv[2]))
 			await channel.send(sys.argv[1])
 	except Exception as e:
 		errlog = open(S.Dir_path + '/err/' + str(datetime.datetime.now().date()) + '.log', 'a')

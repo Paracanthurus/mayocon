@@ -16,6 +16,7 @@ discordbot = False
 # botを使用する
 discordbot_token = ''
 discordbot_channel_id = 1234567890
+result_channel_id = 1234567890
 user_id = 1234567890
 # エラー通知DM先のユーザーID
 
@@ -45,20 +46,22 @@ Description = ''
 
 Public_State = 2
 # 1:Public  2:Private
+
 Mode = 1
 # 1:Nomal  2:Lockout  3:Training
+
 Penalty = 300
 
 Start_Day = 0
 # n日後 (今日なら Start_Day = 0)
 Start_Time = '21:00'
-Duration = 0
+Duration = 100
 
 Expected_Participants = ''
 
 Exclude_experimental_difficulty = True
 
-Exclude_probrems = 4
+Exclude_probrems = 7
 # 1: Exclude all the solved problems by expected participants
 # 2: Exclude all the submitted problems by expected participants
 # 3: Exclude all the solved problems in last 6 months by expected participants
@@ -82,7 +85,7 @@ Sort_Difficulty = True
 
 ABC_Only = True
 
-Exclude_past_days = 30
+Exclude_past_days = 60
 # 過去 n日間に出題された問題を除外（./log/ のファイル参照)
 
 No_contest_day_ABC = True
