@@ -40,7 +40,7 @@ def collect_contests_url():
 		title = tds[0].find_element(by = By.TAG_NAME, value = 'a').get_attribute("textContent")
 		href = tds[0].find_element(by = By.TAG_NAME, value = 'a').get_attribute("href")
 		title = title[7:]
-		if date < str((datetime.datetime.today() - datetime.timedelta(days=2)).date()):
+		if date < str(datetime.datetime.today().date()):
 			return 'no_contest'
 		if title == S.Contest_Title:
 			return href
