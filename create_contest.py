@@ -217,7 +217,8 @@ def create_contest():
 		if driver.current_url == contest_url:
 			sys.exit('コンテストの作成に失敗しました')
 	global bot_msg
-	bot_msg = S.Contest_Title + '開催!\n' + driver.current_url
+	w_list = ['月', '火', '水', '木', '金', '土', '日']
+	bot_msg = '%d月%d日(%s) %s開催!\n'%(T.Start.month, T.Start.day, w_list[T.Start.weekday()], S.Contest_Title) + driver.current_url
 
 
 def main():
