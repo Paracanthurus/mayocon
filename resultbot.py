@@ -80,7 +80,7 @@ def main(Driver, Wait):
 		print(traceback.format_exc())
 		bot_msg = 'err'
 	finally:
-		if S.discordbot and not S.bot_off:
+		if S.discordbot and not S.bot_off and url != 'no_contest':
 			subprocess.call('python3 ' + S.Dir_path + '/discordbot.py "' + bot_msg + '" "' + str(S.result_channel_id) + '"', shell = True)
 
 
