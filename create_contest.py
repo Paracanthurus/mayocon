@@ -106,6 +106,9 @@ def contest_exists():
 			if S.No_contest_day_ARC and 'arc' in href:
 				bot_msg = ('%d月%d日(%s)はARC!\n'%(T.Start.month, T.Start.day, w_list[T.Start.weekday()])) + href
 				return 1
+			if S.No_contest_day_AGC and 'agc' in href:
+				bot_msg = ('%d月%d日(%s)はAGC!\n'%(T.Start.month, T.Start.day, w_list[T.Start.weekday()])) + href
+				return 1
 	return 0
 
 
@@ -116,7 +119,7 @@ def login():
 	driver.find_element(by = By.ID, value = 'password').send_keys(S.password_github)
 	driver.find_element(by = By.ID, value = 'password').send_keys(Keys.RETURN)
 	wait.until(EC.presence_of_all_elements_located)
-	time.sleep(3)
+	time.sleep(60)
 	wait.until(EC.presence_of_all_elements_located)
 	if driver.current_url == 'https://github.com/sessions/verified-device':
 		if S.Display_Browser:
@@ -212,7 +215,7 @@ def create_contest():
 		create_button = driver.find_element(by = By.XPATH, value = '//*[@id="root"]/div/div[2]/div[13]/div/button')
 		driver.execute_script("arguments[0].click();", create_button)
 		wait.until(EC.presence_of_all_elements_located)
-		time.sleep(3)
+		time.sleep(60)
 		wait.until(EC.presence_of_all_elements_located)
 		if driver.current_url == contest_url:
 			sys.exit('コンテストの作成に失敗しました')
